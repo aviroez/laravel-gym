@@ -1,0 +1,67 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - deploy  # Trigger on pushes to the main branch
+  pull_request:
+    branches:
+      - deploy  # Trigger on pull requests to the main branch
+
+jobs:
+  # Job for testing, building, and deploying
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, opcache, intl
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Build React assets
+        run: npm run prod
+
+      - name: Run tests (optional)
+        run: php artisan test # You can run your tests here
+
+      - name: Deploy to DigitalOcean
+        env:
+          DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          DO_SERVER_IP: ${{ secrets.DO_SERVER_IP }}
+        run: |
+          # Configure SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $DO_SERVER_IP >> ~/.ssh/known_hosts
+
+          # Deploy Laravel application to DigitalOcean
+          ssh -o StrictHostKeyChecking=no user@$DO_SERVER_IP << 'EOF'
+            cd /var/www/laravel-gym || exit 1
+            git pull origin main || exit 1
+            composer install --no-dev --optimize-autoloader || exit 1
+            php artisan migrate --force || exit 1
+            npm install --production || exit 1
+            npm run prod || exit 1
+            php artisan config:cache || exit 1
+            php artisan route:cache || exit 1
+            sudo service nginx restart || exit 1
+          EOF
