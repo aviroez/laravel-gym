@@ -50,13 +50,9 @@ jobs:
           # Configure SSH
           mkdir -p ~/.ssh
 
-          echo -n "$SSH_PRIVATE_KEY" | wc -c # Output character count for sanity check (for debugging; remove this in production)
-
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $DO_SERVER_IP >> ~/.ssh/known_hosts
-
-          cat ~/.ssh/id_rsa # Check the private key content (for debugging; remove this in production)
 
           # Deploy Laravel application to DigitalOcean
           ssh -o StrictHostKeyChecking=no root@$DO_SERVER_IP << 'EOF'
@@ -66,7 +62,7 @@ jobs:
             git pull origin deploy || exit 1
             composer install --no-dev --optimize-autoloader || exit 1
             php artisan migrate --force || exit 1
-            npm install --production || exit 1
+            npm install || exit 1
             npm run build || exit 1
             php artisan config:cache || exit 1
             php artisan route:cache || exit 1
