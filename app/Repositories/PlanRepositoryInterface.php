@@ -9,6 +9,4 @@ interface PlanRepositoryInterface extends BaseRepositoryInterface
 
     public function getPaginatedData($perPage, $filters);
 
-    public function createManyFromFactory(int $count);
-
 }

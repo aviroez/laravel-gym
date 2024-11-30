@@ -5,27 +5,10 @@ namespace Database\Seeders;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Subscription;
-use App\Repositories\InvoiceItemRepository;
-use App\Repositories\InvoiceRepository;
-use App\Repositories\SubscriptionRepository;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class InvoiceSeeder extends Seeder
 {
-    private SubscriptionRepository $subscriptionRepository;
-    private InvoiceRepository $invoiceRepository;
-    private InvoiceItemRepository $invoiceItemRepository;
-
-    public function __construct(
-        InvoiceRepository $invoiceRepository,
-        SubscriptionRepository $subscriptionRepository,
-        InvoiceItemRepository $invoiceItemRepository
-    ) {
-        $this->invoiceRepository = $invoiceRepository;
-        $this->subscriptionRepository = $subscriptionRepository;
-        $this->invoiceItemRepository = $invoiceItemRepository;
-    }
     /**
      * Run the database seeds.
      */
@@ -91,7 +74,6 @@ class InvoiceSeeder extends Seeder
                     ]);
                     $total += $subscription->quantity * $subscription->plan->price;
                 }
-
             }
 
             if ($invoice && $invoice->total != $total) {

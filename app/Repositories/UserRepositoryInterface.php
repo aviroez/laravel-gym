@@ -15,6 +15,4 @@ interface UserRepositoryInterface extends BaseRepositoryInterface
 
     public function createIfNotExist($data);
 
-    public function createManyFromFactory(int $count);
-
 }

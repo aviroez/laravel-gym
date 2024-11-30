@@ -69,11 +69,6 @@ class PlanRepository implements PlanRepositoryInterface
         return Plan::create($data);
     }
 
-    public function createManyFromFactory(int $count)
-    {
-        return Plan::factory()->count($count)->create();
-    }
-
     public function updateById($id, $data = [])
     {
         return Plan::find($id)->update($data);

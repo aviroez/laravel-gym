@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SettingRequest;
 use App\Repositories\SettingRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class SettingController extends Controller
@@ -29,18 +30,34 @@ class SettingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SettingRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->validated();
+        $input = $request->input();
+        $file = $request->file();
 
-        try {
-            $this->settingRepository->create($data);
-    
-            return redirect()->route('settings.index')
-                ->with('success', __('dashboard.create_success', ['field' => __('dashboard.setting')]));
-        } catch (\Exception $e) {
-            return redirect()->back()->with('failed', $e->getMessage());
+        if ($input) {
+            foreach ($input as $key => $value) {
+                // try {
+                    $this->settingRepository->upsert($key, $value);
+                // } catch (\Exception $e) {
+
+                // }
+            }
         }
+
+        if ($file) {
+            foreach ($file as $key => $value) {
+                // try {
+                    $filePath = $value->store('uploads/images', 'public');
+                    $this->settingRepository->upsert($key, $filePath);
+                // } catch (\Exception $th) {
+
+                // }
+            }
+        }
+
+        // return redirect()->route('settings.index')
+        //         ->with('success', __('dashboard.create_success', ['field' => __('dashboard.setting')]));
     }
 
     /**
