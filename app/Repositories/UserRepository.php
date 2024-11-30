@@ -52,7 +52,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function create($data = [])
     {
-        return User::factory()->create($data);
+        return User::create($data);
     }
 
     public function createIfNotExist($data = [])
@@ -62,14 +62,9 @@ class UserRepository implements UserRepositoryInterface
         }
         $user = $this->findByEmail($data['email']);
         if (!$user) {
-            return User::factory()->create($data);
+            return $this->create($data);
         }
         return $user;
-    }
-
-    public function createManyFromFactory(int $count)
-    {
-        return User::factory()->count($count)->create();
     }
 
     public function updateById($id, $data = [])
@@ -135,14 +130,14 @@ class UserRepository implements UserRepositoryInterface
     public function getAllMembers($type = 'month')
     {
         return User::whereIn('role', [User::MEMBER])
-            // ->where('created_at', '<=', ($type == 'year') ? now()->subYear() : now()->subMonth())
+            ->where('created_at', '<=', ($type == 'year') ? now()->subYear() : now()->subMonth())
             ->count();
     }
 
     public function getActiveMembers($type = 'month')
     {
         return User::whereIn('role', [User::MEMBER])
-            // ->where('created_at', '<=', ($type == 'year') ? now()->subYear() : now()->subMonth())
+            ->where('created_at', '<=', ($type == 'year') ? now()->subYear() : now()->subMonth())
             ->whereHas('subscriptions', function (Builder $query) {
                 $query->where('status', Subscription::ACTIVE);
             })

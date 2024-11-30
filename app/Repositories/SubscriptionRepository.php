@@ -61,9 +61,4 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
     {
         return Subscription::pluck('title', 'id');
     }
-
-    public function createManyFromFactory(int $count)
-    {
-        return Subscription::factory()->count($count)->create();
-    }
 }

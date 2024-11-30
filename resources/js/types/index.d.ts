@@ -155,4 +155,5 @@ export type PageProps<
     translations: [],
     filters: Filter[],
     flash: FlashMessages;
+    storage_url: string;
 };

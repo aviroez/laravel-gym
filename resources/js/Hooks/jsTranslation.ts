@@ -1,4 +1,4 @@
-import { PageProps, User } from '@/types';
+import { PageProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 
 const useTranslations = () => {
