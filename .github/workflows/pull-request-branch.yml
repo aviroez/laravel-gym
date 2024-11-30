@@ -1,0 +1,39 @@
+name: Pull Request Branch Deploy Pipeline
+
+on:
+  pull_request:
+    branches:
+      - deploy  # Trigger on pull requests to the deploy branch
+
+jobs:
+  # Job for testing, building, and deploying
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, ctype, fileinfo, json, openssl, pdo_mysql, pdo_sqlite, tokenizer, xml
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Build React assets
+        run: npm run build
+
+#      - name: Run tests (optional)
+#        run: php artisan test # You can run your tests here
