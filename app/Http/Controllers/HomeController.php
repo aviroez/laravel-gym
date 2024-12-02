@@ -28,7 +28,7 @@ class HomeController extends Controller
     public function index(Request $request): Response
     {
         $setting = $this->settingRepository->findById('google_place_id');
-        $placeId = $setting->value ? $setting->value : '';
+        $placeId = $setting && $setting->value ? $setting->value : '';
 
         $service = new GooglePlaceApiService($placeId, null);
         $reviews = $service->getReviews();

@@ -25,7 +25,7 @@ jobs:
           ssh-keyscan -H $DO_SERVER_IP >> ~/.ssh/known_hosts
 
           # Deploy Laravel application to DigitalOcean
-          ssh -o StrictHostKeyChecking=no deployer@$DO_SERVER_IP << 'EOF'
+          ssh -o StrictHostKeyChecking=no root@$DO_SERVER_IP << 'EOF'
             cd /var/www/html
             git clone https://github.com/aviroez/laravel-gym.git laravel-gym || (cd laravel-gym && git pull)
             cd laravel-gym
