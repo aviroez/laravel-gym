@@ -14,6 +14,7 @@ class Setting extends Model
     public const JSON = 'json';
     public const FILE = 'file';
     public const TEXTAREA = 'textarea';
+    public const OPTION = 'option';
 
     protected $primaryKey = 'key';
     public $incrementing = false;
